@@ -1,0 +1,4 @@
+Flask
+Flask-Bcrypt
+psycopg2-binary
+gunicorn

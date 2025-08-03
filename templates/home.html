@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Flask App</title>
+    <link rel="stylesheet" href="../static/home.css">
+
+</head>
+<body>
+    <div class="header">
+      <img src="../static/icon.svg" alt="">
+      <div class="nav">
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+      </div>
+    </div>
+    <div class="container">
+      <div class="text-wrapper">
+        <h1>AlignXercise</h1>
+      </div>
+      <p>Transforming exercise with precision and fun. We correct posture and gamify fitness.</p>
+    </div>
+
+</body>
+</html>

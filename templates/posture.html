@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/posture.css">
+    <title>Posture</title>
+</head>
+<body>
+    <nav>
+        <div class="">
+            <a href="{{url_for('dashboard')}}">Home</a>
+            <a href="{{url_ for('profile')}}">Profile</a>
+            <a href="{{url_for('practise')}}">Practise</a>
+        </div>
+    </nav>
+    <div id = "container">
+        <h1>Exercise</h1>
+        <img src="{{ url_for('video_feed') }}">
+    </div>
+</body>
+</html>

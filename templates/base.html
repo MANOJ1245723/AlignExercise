@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Base Stylesheet for the whole app -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- This block allows individual pages to add their own CSS -->
+    {% block head %}{% endblock %}
+    <title>{% block title %}AlignXercise{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="{{ url_for('dashboard') }}"><img src="{{ url_for('static', filename='icon.svg') }}" alt="Home"> AlignXercise</a>
+            </div>
+            <div class="nav-right">
+                <!-- Show different links based on whether user is logged in -->
+                {% if g.user %}
+                    <a href="{{ url_for('practise') }}" class="nav-link">Practise</a>
+                    <div class="dropdown">
+                        <img src="{{ url_for('static', filename='user.svg') }}" alt="User Icon" class="user-icon">
+                        <div class="dropdown-content">
+                            <a href="{{ url_for('profile') }}">Profile</a>
+                            <a href="{{ url_for('logout') }}">Logout</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+                    <a href="{{ url_for('register') }}" class="nav-link register-btn">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- This is where the content of individual pages will go -->
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

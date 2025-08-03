@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13-alpine
+    container_name: postgres_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Data!@1234  # The password itself is unchanged here
+      - POSTGRES_DB=userdetails
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    container_name: flask_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      #  --- THIS IS THE CORRECTED LINE ---
+      - DATABASE_URL=postgresql://postgres:Data!%401234@db:5432/userdetails
+      - SECRET_KEY=a-really-secret-key-that-you-should-change
+
+volumes:
+  postgres_data:

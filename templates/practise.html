@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='practise.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous" defer></script>
+    <title>Exercise Plan</title>
+</head>
+<body>
+    <nav>
+        <div class="hello">
+            <img src="{{ url_for('static', filename='icon.svg') }}" alt="">
+            <a href="{{url_for('dashboard')}}">Dashboard</a>
+        </div>
+        <div class="dropdown">
+            <img src="{{ url_for('static', filename='user.svg') }}" alt="User Icon" width="24" height="24">
+            <div class="dropdown-content">
+                <a href="{{url_for('profile')}}">Profile</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content-wrapper">
+        <div class="header-content">
+            <h1>Welcome, {{ username }}</h1>
+            {% if not message %}
+                <h2>Exercise Plan for Today (Day: {{ exercise_plan.day }})</h2>
+            {% endif %}
+        </div>
+
+        {% if message %}
+            <p class="message-box">{{ message }}</p>
+        {% else %}
+            <div class="practise-container">
+                <!-- Left Column: Video -->
+                <div class="video-column">
+                    <div id="container-box">
+                        <video class="input_video" style="display: none;"></video>
+                        <canvas class="output_canvas" width="1280" height="720"></canvas>
+                    </div>
+                     <!-- NEW: Feedback box for form correction -->
+                    <div id="feedback-box">
+                        <p id="feedback-text"></p>
+                    </div>
+                </div>
+
+                <!-- Right Column: Controls -->
+                <div class="controls-column">
+                    <div class="stat-box">
+                        <p>Pushups:</p>
+                        <p><span id="pushups_completed">{{ exercise_plan.pushups_completed }}</span> / <span id="pushups_target">{{ exercise_plan.pushups }}</span></p>
+                        <button class="start-btn" data-exercise="pushups">start</button>
+                    </div>
+                    <div class="stat-box">
+                        <p>Squats:</p>
+                        <p><span id="squats_completed">{{ exercise_plan.squats_completed }}</span> / <span id="squats_target">{{ exercise_plan.squats }}</span></p>
+                        <button class="start-btn" data-exercise="squats">start</button>
+                    </div>
+                    <div class="stat-box">
+                        <p>Situps:</p>
+                        <p><span id="situps_completed">{{ exercise_plan.situps_completed }}</span> / <span id="situps_target">{{ exercise_plan.situps }}</span></p>
+                        <button class="start-btn" data-exercise="situps">start</button>
+                    </div>
+                    <p class="completion-text">Completion: <span id="completion_percentage">{{ exercise_plan.completion }}</span>%</p>
+                </div>
+            </div>
+        {% endif %}
+    </main>
+
+    {% if not message %}
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const pose = new Pose({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`});
+            pose.setOptions({
+                modelComplexity: 1,
+                smoothLandmarks: true,
+                minDetectionConfidence: 0.7,
+                minTrackingConfidence: 0.7
+            });
+
+            const videoElement = document.querySelector('.input_video');
+            const canvasElement = document.querySelector('.output_canvas');
+            const canvasCtx = canvasElement.getContext('2d');
+            const feedbackBox = document.getElementById('feedback-box');
+            const feedbackText = document.getElementById('feedback-text');
+
+            let counters = {
+                pushups: parseInt(document.getElementById("pushups_completed").textContent),
+                squats: parseInt(document.getElementById("squats_completed").textContent),
+                situps: parseInt(document.getElementById("situps_completed").textContent),
+            };
+            const targets = {
+                pushups: parseInt(document.getElementById("pushups_target").textContent),
+                squats: parseInt(document.getElementById("squats_target").textContent),
+                situps: parseInt(document.getElementById("situps_target").textContent),
+            };
+            let currentExercise = null;
+            let stage = "down";
+
+            function speak(text) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 1.2;
+                window.speechSynthesis.speak(utterance);
+            }
+
+            function sendExerciseUpdate(exerciseType, count) {
+                fetch('/update_exercise', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ exercise_type: exerciseType, completed_reps: count })
+                }).catch(error => console.error('Error updating exercise:', error));
+            }
+
+            function updateUI(exerciseType) {
+                document.getElementById(`${exerciseType}_completed`).textContent = counters[exerciseType];
+                const totalCompleted = Object.values(counters).reduce((a, b) => a + b, 0);
+                const totalTarget = Object.values(targets).reduce((a, b) => a + b, 0);
+                const completionPercentage = totalTarget > 0 ? Math.round((totalCompleted / totalTarget) * 100) : 0;
+                document.getElementById('completion_percentage').textContent = completionPercentage;
+
+                if (completionPercentage >= 100) {
+                    speak("Congratulations! You've completed your workout for today!");
+                    fetch('/increment_day', { method: 'POST' }).then(res => {
+                        if (res.ok) window.location.reload();
+                    });
+                }
+            }
+
+            function calculateAngle(a, b, c) {
+                const ba = { x: a.x - b.x, y: a.y - b.y };
+                const bc = { x: c.x - b.x, y: c.y - b.y };
+                const dotProduct = ba.x * bc.x + ba.y * bc.y;
+                const magnitudeBA = Math.sqrt(ba.x * ba.x + ba.y * ba.y);
+                const magnitudeBC = Math.sqrt(bc.x * bc.x + bc.y * bc.y);
+                const cosineAngle = dotProduct / (magnitudeBA * magnitudeBC);
+                if (cosineAngle > 1.0) return 0;
+                if (cosineAngle < -1.0) return 180;
+                const angleRadians = Math.acos(cosineAngle);
+                return (angleRadians * 180.0) / Math.PI;
+            }
+
+            function calculateBestAngle(landmarks, p1, p2, p3, p4, p5, p6) {
+                const l_a = landmarks[p1], l_b = landmarks[p2], l_c = landmarks[p3];
+                const r_a = landmarks[p4], r_b = landmarks[p5], r_c = landmarks[p6];
+                if (!l_a || !l_b || !l_c || !r_a || !r_b || !r_c) return 0;
+
+                if (r_a.visibility > l_a.visibility) {
+                    return calculateAngle(r_a, r_b, r_c);
+                }
+                return calculateAngle(l_a, l_b, l_c);
+            }
+
+            let feedbackTimeout;
+            function showFeedback(message, isGood) {
+                clearTimeout(feedbackTimeout);
+                feedbackText.textContent = message;
+                feedbackBox.className = 'visible ' + (isGood ? 'good' : 'bad');
+                feedbackTimeout = setTimeout(() => {
+                    feedbackBox.className = '';
+                }, 2000); // Hide feedback after 2 seconds
+            }
+
+            function onResults(results) {
+                canvasCtx.save();
+                canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+                canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+                if (results.poseLandmarks) {
+                    drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {color: '#FFFFFF', lineWidth: 2});
+                    drawLandmarks(canvasCtx, results.poseLandmarks, {color: '#FF0000', lineWidth: 1});
+                    if (currentExercise && counters[currentExercise] < targets[currentExercise]) {
+                        detectExercise(results.poseLandmarks);
+                    }
+                }
+                canvasCtx.restore();
+            }
+            pose.onResults(onResults);
+            function detectExercise(landmarks) {
+                const areLandmarksVisible = (points) => points.every(p => landmarks[p] && landmarks[p].visibility > 0.6);
+
+                if (currentExercise === 'pushups') {
+                    if (!areLandmarksVisible([11, 13, 15, 23, 25, 27, 12, 14, 16, 24, 26, 28])) {
+                        showFeedback("Position your full body in the frame.", false);
+                        return;
+                    }
+                    const elbowAngle = calculateBestAngle(landmarks, 11, 13, 15, 12, 14, 16);
+                    const backAngle = calculateBestAngle(landmarks, 11, 23, 25, 12, 24, 26);
+
+                    const isBackStraight = backAngle > 155;
+
+                    if (!isBackStraight) {
+                        showFeedback("Keep your back straight!", false);
+                        return;
+                    }
+
+                    showFeedback("", true);
+
+                    const downThreshold = 95, upThreshold = 160;
+                    if (elbowAngle <= downThreshold && stage === "down") {
+                        stage = "up";
+                    }
+                    if (elbowAngle >= upThreshold && stage === "up") {
+                        stage = "down";
+                        counters.pushups++;
+                        speak(counters.pushups);
+                        sendExerciseUpdate('pushups', counters.pushups);
+                        updateUI('pushups');
+                    }
+                } else if (currentExercise === 'squats') {
+                    if (!areLandmarksVisible([11, 23, 25, 27, 12, 24, 26, 28])) {
+                        showFeedback("Position your full body in the frame.", false);
+                        return;
+                    }
+                    const kneeAngle = calculateBestAngle(landmarks, 23, 25, 27, 24, 26, 28);
+                    const backLeanAngle = calculateBestAngle(landmarks, 11, 23, 25, 12, 24, 26);
+
+                    const isBackUpright = backLeanAngle > 85;
+
+                    if (!isBackUpright) {
+                        showFeedback("Keep your chest up!", false);
+                        return;
+                    }
+
+                    showFeedback("", true);
+
+                    const downThreshold = 100, upThreshold = 170;
+                    if (kneeAngle <= downThreshold && stage === "down") {
+                        stage = "up";
+                    }
+                    if (kneeAngle >= upThreshold && stage === "up") {
+                        stage = "down";
+                        counters.squats++;
+                        speak(counters.squats);
+                        sendExerciseUpdate('squats', counters.squats);
+                        updateUI('squats');
+                    }
+                } else if (currentExercise === 'situps') {
+                    if (!areLandmarksVisible([11, 23, 25, 12, 24, 26])) {
+                        showFeedback("Position your torso and legs in the frame.", false);
+                        return;
+                    }
+                    const angle = calculateBestAngle(landmarks, 11, 23, 25, 12, 24, 26);
+                    const downThreshold = 100, upThreshold = 70;
+                    if (angle >= downThreshold && stage === "down") { stage = "up"; }
+                    if (angle <= upThreshold && stage === "up") {
+                        stage = "down";
+                        counters.situps++;
+                        speak(counters.situps);
+                        sendExerciseUpdate('situps', counters.situps);
+                        updateUI('situps');
+                    }
+                }
+            }
+
+            document.querySelectorAll('.start-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const exercise = button.getAttribute('data-exercise');
+                    currentExercise = exercise;
+                    stage = 'down';
+                    speak(`Starting ${exercise}`);
+                });
+            });
+
+            const camera = new Camera(videoElement, {
+                onFrame: async () => await pose.send({image: videoElement}),
+                width: 1280,
+                height: 720
+            });
+            camera.start();
+        });
+    </script>
+    {% endif %}
+</body>
+</html>

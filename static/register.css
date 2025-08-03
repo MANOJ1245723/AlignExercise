@@ -1,0 +1,134 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-image: url(https://mir-s3-cdn-cf.behance.net/project_modules/1400/04d53f80577741.5cf8b5c84827c.gif);
+    background-size: cover;
+    background-position: center;
+ 
+    padding: 0;
+    /* background: #0c0000; */
+    overflow: hidden;
+}
+nav {
+    background-color: transparent;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;
+}
+nav a {
+    color: #fff;
+    text-decoration: none; 
+    margin-right: 10px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}     
+
+nav img{
+    width: 50px;
+    cursor: pointer;
+}
+.hello img:hover{
+    transform: translateY(-3px); 
+}
+.hello a:hover{
+    text-decoration: underline;
+}
+.hello a{
+    position: relative;
+    top: -20px;
+}
+form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 200px;
+    margin: 20px;
+    border: 1px solid white;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent black background */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);  
+    /* Add shadow for depth */
+} 
+.container{ 
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+h1 {
+    margin-bottom: 20px;
+    color: whitesmoke;
+}
+
+input {
+    padding: 15px;
+    /* Increase padding */
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: whitesmoke;
+    margin-bottom: 15px;
+    /* Increase margin */
+}
+
+button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 15px;
+    /* Increase padding */
+    border: 1px solid white;
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+button:hover {
+    background-color: black;
+    /* Change background color on hover */
+    color: white;
+    /* Change text color on hover */
+}
+
+button span {
+    position: absolute;
+    width: 0;
+    height: 100%;
+    background-color: white;
+    transition: width 0.3s;
+}
+
+
+p {
+    margin-top: 20px;
+    color: whitesmoke;
+    cursor: pointer;
+}
+
+#register-link {
+    color: rgb(179, 201, 245);
+    text-decoration: none;
+}
+
+#register-link:hover {
+    text-decoration: none;
+}

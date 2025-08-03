@@ -1,0 +1,293 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #0c0000;
+}
+
+nav {
+    background-color: transparent;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100vw;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+nav img{
+    width: 50px;
+    cursor: pointer;
+}
+.hello:hover img{
+    transform: translateY(-3px);
+}
+.hello:hover a{
+    text-decoration: underline;
+}
+.hello a{
+    position: relative;
+    top: -20px;
+}
+
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right:10px;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-right: 10px;
+    border: none;
+    border-radius: 50%;
+    background-color: #fff;
+}
+.dropdown img:hover {
+    background-color: rgb(200, 200, 200);
+}
+
+
+
+
+
+
+
+
+h1, h2{
+    color: #ebe8e8;
+    padding: 20px;
+    margin-left: 40px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+h2{
+    margin-bottom: 10px;
+}
+#container{
+    width:100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.exercise-card {
+    border: 1px solid #ccc;
+    background-color: #eeddb8;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 20px;
+    width : 85%;
+    /* background-color: #f9f9f9; */
+    box-shadow: 0px 2px 4px rgba(174, 28, 28, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+#container img{
+
+    width: 10px;
+    height : 10px;
+    margin-left: 10px;
+}
+.exercise-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.exercise-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.exercise-card p {
+    margin-top: 5px;
+    font-size: 1rem;
+    color: #666;
+}
+
+.exercise-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.exercise-item {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-label {
+    font-size: 0.9rem;
+    margin-left: 5px;
+}
+
+.checkbox-label:hover {
+    color: #007bff;
+    cursor: pointer;
+}
+
+
+#completion-1,
+#completion-2,
+#completion-3,
+#completion-4,
+#completion-5 {
+    font-weight: bold;
+    color: #007bff;
+    transition: color 0.3s ease-in-out;
+}
+
+#completion-1:hover,
+#completion-2:hover,
+#completion-3:hover,
+#completion-4:hover,
+#completion-5:hover {
+    color: #0056b3;
+}
+p{
+    color: #fff;
+    margin-left: 60px;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    word-spacing: 1px;
+    font-size: large;
+}
+/* ======================================================= */
+/* === NEW STYLES for Layout below the Navbar          === */
+/* ======================================================= */
+
+/* This new wrapper controls all content below the nav */
+.content-wrapper {
+    padding: 0 40px 40px 40px; /* Add padding to match h1/h2 margins */
+}
+
+/* This is the main container for the two-column layout */
+.practise-container {
+    display: flex;
+    gap: 30px; /* Space between video and controls */
+    align-items: flex-start;
+}
+
+/* Left column containing the video feed */
+.video-column {
+    flex: 3; /* This column will be 3 times wider than the controls column */
+}
+
+#container-box { /* Your original video container */
+    width: 100%;
+}
+
+.output_canvas {
+    width: 100%;
+    height: auto;
+    border: 2px solid #333; /* A subtle border for the video */
+    border-radius: 4px;
+}
+
+/* Right column for the stats and buttons */
+.controls-column {
+    flex: 1; /* This column takes the remaining space */
+    padding-top: 20px; /* Align it better with the video */
+}
+
+/* A container for each exercise stat line */
+.exercise-stat, .completion-stat {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border-radius: 5px;
+    border-left: 3px solid #4CAF50; /* Accent color */
+}
+
+.exercise-stat p, .completion-stat p {
+    margin: 0; /* Remove the default large left margin */
+    display: flex; /* Use flexbox to align text and button */
+    justify-content: space-between;
+    align-items: center;
+    color: #e0e0e0;
+    font-size: 1rem;
+}
+
+/* No accent or background for the final completion stat */
+.completion-stat {
+    background: none;
+    border: none;
+    padding-left: 0;
+}
+.completion-stat p {
+    justify-content: flex-start;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+
+/* Styling for the Start Buttons */
+.start-btn {
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 6px 12px;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 20px; /* pill-shaped buttons */
+    transition: all 0.2s ease;
+    font-weight: bold;
+}
+
+.start-btn:hover {
+    background-color: #4CAF50; /* Green on hover */
+    border-color: #4CAF50;
+}
+
+/* REMOVE the old #container style that was forcing everything into one column */
+#container {
+   /* We leave this empty to override the old style without deleting it */
+   /* This prevents it from interfering with our new Flexbox layout */
+   display: block; /* Change from flex to block */
+   width: auto;
+}
